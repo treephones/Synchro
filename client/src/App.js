@@ -1,7 +1,7 @@
 //css
 import './App.css';
 //components
-import Start from './components/home/form.js';
+import Start from './components/home/home.js';
 
 
 function App() {
