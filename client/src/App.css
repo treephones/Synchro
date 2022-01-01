@@ -2,6 +2,11 @@
   color: white;
 }
 
+.spacer {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -36,6 +41,13 @@
 }
 
 #ftitle {
+  text-align: center;
+}
+
+#nr {
+  margin-top: 1rem;
+  margin-bottom: -1rem;
+  font-size: calc(10px + 1vmin);
   text-align: center;
 }
 
