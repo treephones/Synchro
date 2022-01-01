@@ -1,9 +1,5 @@
-.App {
-  text-align: center;
-}
-
-code {
-  color: yellow;
+.synchro {
+  color: white;
 }
 
 .App-header {
@@ -17,3 +13,36 @@ code {
   color: white;
 }
 
+#sform {
+  background-color: #363b46;
+  padding: 3%;
+  width: 30%;
+  border-radius: 2rem;
+}
+
+.text-muted {
+  font-size: calc(10px + 1vmin);
+}
+
+#join {
+  padding-inline: 10%;
+  padding-block: 1.8%;
+}
+
+#submit {
+  display:flex;
+  justify-content:center;
+  align-items: center;
+}
+
+#ftitle {
+  text-align: center;
+}
+
+/* moblie */
+@media (max-width: 925px) {
+  #sform {
+    width: 70%;
+    padding: 10%;
+  }
+}
