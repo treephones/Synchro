@@ -46,6 +46,7 @@ const Start = () => {
                                     setErr(!err);
                                 }
                                 navigate(`/${roomID}`);
+                                localStorage.setItem("un", username);
                             }
                             else {
                                 if(!err) {

@@ -7,7 +7,16 @@ require('dotenv').config();
 
 const SERVER_PORT = process.env.PORT || 3001;
 
-let rooms = {'swag': 12};
+let rooms = {testid: {
+  roomName: 'Test Room',
+  roomID: 'testid',
+  connections: [
+    {
+      socket: undefined,
+      username:'tester'
+    }
+  ]
+}};
 
 let app = express();
 
@@ -30,7 +39,31 @@ app.post('/:roomID', (req, res) => {
 let server = app.listen(SERVER_PORT);
 console.log(`Synchro is now active on port ${SERVER_PORT}.`);
 
-const io = sockets(server);
+const io = sockets(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+});
 io.on('connection', (socket) => {
-  console.log("");
+
+  socket.on('roomData', (data) => {
+    rooms[data.from].connections.push({
+      socket: socket,
+      username: data.username
+    });
+    socket.join(data.from);
+    var time = new Date();
+    io.sockets.in(data.from).emit('message', {
+      sender: data.username,
+      time: time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }),
+      text: `Say hi! ${data.username} has just joined the chat!` 
+    });
+    // const clients = io.sockets.adapter.rooms.get(data.from);
+    // clients.forEach(client => {
+    //   console.log(client);
+    // });
+
+  });
+
 });

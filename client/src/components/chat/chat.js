@@ -1,39 +1,47 @@
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import Spacer from '../Spacer.js';
+import Message from './message.js';
+import { useState, useEffect } from 'react';
 
 
-const Chat = () => {
+const Chat = ({ socket, name }) => {
+    const [messageField, setMessageField] = useState(0);
+    const [chars, setChars] = useState('0/2048');
+    const [messages, setMessages] = useState([]);
+
+    useEffect(() => {
+        socket.on('message', (message) => {
+            setMessages([...messages, <Message username={message.sender} time={message.time} message={message.text} />]);
+        });
+    });
+
     return (
-        <Container id='sform'>
-            <Form>
-                <h1 className='synchro' id='ftitle'>Synchro</h1>
-                <Container>
-                    <p id='nr'>Join a room.</p>
-                </Container>
+        <Container id='cform'>
+            <Row id='cname'>
+                    <Col>{name}</Col>
+                </Row>
+            <Container id='chat' fluid="md">  
+                <Row>
+                    <Col>㋡</Col>
+                </Row>
+                {
+                    messages.map(component => component)
+                }
+            </Container>
+            <Form.Group className="mb-3">
                 <Spacer />
-                <Form.Group className="mb-3">
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control type="email" placeholder="Username" />
-                    <Form.Text className="text-muted">This is what others in the chatroom will see.</Form.Text>
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                    <Form.Label>Invite URL or Code</Form.Label>
-                    <Form.Control type="text" placeholder="Code" />
-                    <Form.Text className="text-muted">Example: synchro.moez.io/3kj42q or 3kj42q</Form.Text>
-                </Form.Group>
-                <Container id='submit'>
-                    <Button id='join' size='lg' variant="primary" type="submit" onClick={(e) => {
-                        e.preventDefault();
-                        console.log('clicked');
-                    }}>Join</Button> 
-                </Container>
-                <Container>
-                    <p id='nr'>Want to make a room? Do it <a href='/make'>here.</a></p> 
-                </Container>
-            </Form>
+                <Form.Control type="message" placeholder="Type a message." onChange={e => {
+                    let val = e.target.value.substring(0, 2048);
+                    setMessageField(val);
+                    e.target.value = val;
+                    setChars(`${val.length}/2048`);
+                }}/>
+                <Form.Text className="text-muted">{chars}</Form.Text>
+            </Form.Group>
         </Container>
     );
 }
