@@ -15,7 +15,7 @@ const Create = () => {
                 <Spacer />
                 <Form.Group className="mb-3">
                     <Form.Label>Room Name</Form.Label>
-                    <Form.Control type="email" placeholder="Username" />
+                    <Form.Control type="username" placeholder="Username" />
                     <Form.Text className="text-muted">Room name - keep it simple.</Form.Text>
                 </Form.Group>
 
