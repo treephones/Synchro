@@ -12,22 +12,20 @@ function ChatRoom(props) {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    roomID = window.location.pathname;
-    roomID = roomID.substring(1, roomID.length);
+    roomID = window.location.pathname.substring(1);
     const userSocket = io(`http://${window.location.hostname}:3001`);
     setSocket(userSocket);
     userSocket.emit('roomData', {
       from: roomID,
       username: localStorage.getItem('un')
     });
-    localStorage.removeItem('un');
     return () => userSocket.close();
   }, [setSocket]);
 
   return (
     <div className="App">
       <header className="App-header">
-        {socket ? <Chat name='example chat' socket={socket} /> : <></>}
+        {socket ? <Chat name='example chat' socket={socket} username={localStorage.getItem('un')} /> : <></>}
       </header>
     </div>
   );

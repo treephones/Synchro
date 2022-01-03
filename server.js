@@ -39,12 +39,18 @@ app.post('/:roomID', (req, res) => {
 let server = app.listen(SERVER_PORT);
 console.log(`Synchro is now active on port ${SERVER_PORT}.`);
 
+let getTime = () => {
+  var time = new Date();
+  return time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+}
+
 const io = sockets(server, {
   cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"]
   }
 });
+
 io.on('connection', (socket) => {
 
   socket.on('roomData', (data) => {
@@ -53,10 +59,9 @@ io.on('connection', (socket) => {
       username: data.username
     });
     socket.join(data.from);
-    var time = new Date();
     io.sockets.in(data.from).emit('message', {
       sender: data.username,
-      time: time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }),
+      time: getTime(),
       text: `Say hi! ${data.username} has just joined the chat!` 
     });
     // const clients = io.sockets.adapter.rooms.get(data.from);
@@ -64,6 +69,14 @@ io.on('connection', (socket) => {
     //   console.log(client);
     // });
 
+  });
+
+  socket.on('message', (data) => {
+    socket.broadcast.to(data.from).emit('message', {
+      sender: data.sender,
+      time: getTime(),
+      text: data.message
+    });
   });
 
 });

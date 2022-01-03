@@ -5,17 +5,38 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Spacer from '../Spacer.js';
 import Message from './message.js';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
+const uuid = () => {
+    return '_' + Math.random().toString(36).substring(2, 9);
+}
 
-const Chat = ({ socket, name }) => {
-    const [messageField, setMessageField] = useState(0);
+let getTime = () => {
+    var time = new Date();
+    return time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+}
+
+const ToBottomOfChat = () => {
+    const chatRef = useRef();
+
+    useEffect(() => {
+        chatRef.current.scrollIntoView();
+    });
+
+    return (
+        <div ref={chatRef}></div>
+    );
+}
+
+const Chat = ({ socket, name, username }) => {
+    const [messageField, setMessageField] = useState("");
     const [chars, setChars] = useState('0/2048');
     const [messages, setMessages] = useState([]);
 
     useEffect(() => {
         socket.on('message', (message) => {
-            setMessages([...messages, <Message username={message.sender} time={message.time} message={message.text} />]);
+            console.log("got");
+            setMessages([...messages, <Message username={message.sender} time={getTime()} message={message.text} key={uuid()}/>]);
         });
     });
 
@@ -31,15 +52,32 @@ const Chat = ({ socket, name }) => {
                 {
                     messages.map(component => component)
                 }
+                <ToBottomOfChat />
             </Container>
             <Form.Group className="mb-3">
                 <Spacer />
-                <Form.Control type="message" placeholder="Type a message." onChange={e => {
+                <Form.Control
+                 type="message" 
+                 placeholder="Type a message." 
+                 onChange={e => {
                     let val = e.target.value.substring(0, 2048);
                     setMessageField(val);
                     e.target.value = val;
                     setChars(`${val.length}/2048`);
-                }}/>
+                }} 
+                onKeyPress={k => {
+                    if (k.key === 'Enter') {
+                        socket.emit('message', {
+                            sender: username,
+                            message: messageField,
+                            from: window.location.pathname.substring(1)
+                        });
+                        setMessages([...messages, <Message username={username} time={getTime()} message={messageField} key={uuid()}/>]);
+                        k.target.value = "";
+                        setChars('0/2048');
+                    }
+                }}
+                />
                 <Form.Text className="text-muted">{chars}</Form.Text>
             </Form.Group>
         </Container>
