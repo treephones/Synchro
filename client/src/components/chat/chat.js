@@ -35,7 +35,6 @@ const Chat = ({ socket, name, username }) => {
 
     useEffect(() => {
         socket.on('message', (message) => {
-            console.log("got");
             setMessages([...messages, <Message username={message.sender} time={getTime()} message={message.text} key={uuid()}/>]);
         });
     });

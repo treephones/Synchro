@@ -25,7 +25,7 @@ function ChatRoom(props) {
   return (
     <div className="App">
       <header className="App-header">
-        {socket ? <Chat name='example chat' socket={socket} username={localStorage.getItem('un')} /> : <></>}
+        {socket ? <Chat name={localStorage.getItem('rn')} socket={socket} username={localStorage.getItem('un')} /> : <></>}
       </header>
     </div>
   );

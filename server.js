@@ -32,7 +32,23 @@ app.get('/*', (req, res) => {
 
 app.post('/:roomID', (req, res) => {
   let room = rooms[req.params.roomID];
-  res.send([new Boolean(room)]);
+  res.send([new Boolean(room), room ? room.roomName : 0]);
+});
+
+app.post('/mkrm/:roomID/:roomname', (req, res) => {
+  let roomID = req.params.roomID;
+  let roomName  = req.params.roomname;
+  if(!rooms[roomID]) {
+    rooms[roomID] = {
+      roomName: roomName,
+      roomID: roomID,
+      connections: []
+    }
+    res.send([true]);
+  }
+  else {
+    res.send([false]);
+  }
 });
 
 //startup
