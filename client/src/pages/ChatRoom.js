@@ -13,7 +13,7 @@ function ChatRoom(props) {
 
   useEffect(() => {
     roomID = window.location.pathname.substring(1);
-    const userSocket = io(`http://${window.location.hostname}:3001`);
+    const userSocket = io('/');
     setSocket(userSocket);
     userSocket.emit('roomData', {
       from: roomID,
