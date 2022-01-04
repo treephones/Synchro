@@ -36,7 +36,7 @@ const Start = () => {
                 <Container id='submit'>
                     <Button id='join' size='lg' variant="primary" type="submit" ref={target} onClick={(e) => {
                         e.preventDefault();
-                        fetch(`http://localhost:3001/${roomID}`, {
+                        fetch(`/${roomID}`, {
                             method: 'POST',
                         })
                         .then((res) => res.json())
