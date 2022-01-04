@@ -12,7 +12,7 @@ let rooms = {testid: {
   roomID: 'testid',
   connections: [
     {
-      socket: undefined,
+      id: undefined,
       username:'tester'
     }
   ]
@@ -70,13 +70,15 @@ const io = sockets(server, {
 io.on('connection', (socket) => {
 
   socket.on('roomData', (data) => {
-    rooms[data.from].connections.push({
-      socket: socket,
-      username: data.username
-    });
     socket.join(data.from);
+    let ishost = rooms[data.from].connections.length == 0;
+    rooms[data.from].connections.push({
+      id: socket.id,
+      username: data.username,
+      host: ishost
+    });
     io.sockets.in(data.from).emit('message', {
-      sender: data.username,
+      sender: "",
       time: getTime(),
       text: `Say hi! ${data.username} has just joined the chat!` 
     });
@@ -85,6 +87,26 @@ io.on('connection', (socket) => {
     //   console.log(client);
     // });
 
+  });
+
+  socket.on('disconnecting', (data) => {
+    let rm = Array.from(socket.rooms)[1];
+    let clients = Array.from(io.sockets.adapter.rooms.get(rm));
+    if(clients.length == 1) {
+      delete rooms[rm];
+    }
+    else {
+      let conn = rooms[rm].connections.find(conn => conn.id == socket.id);
+      rooms[rm].connections = rooms[rm].connections.filter(conn => conn.id != socket.id);
+      if(conn.ishost) {
+        rooms[rm].connections[Math.floor(Math.random()*rooms[rm].connections.length)].host = true;
+      }
+      io.sockets.in(rm).emit('message', {
+        sender: "",
+        time: getTime(),
+        text: `${conn.username} has left the chat.`
+      });
+    }
   });
 
   socket.on('message', (data) => {
